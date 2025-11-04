@@ -12,6 +12,7 @@ permissions:
 jobs:
   install:
     runs-on: ubuntu-latest
+    environment: dev
     permissions:
       contents: read
       id-token: write
