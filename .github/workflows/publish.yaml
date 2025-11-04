@@ -11,7 +11,9 @@ on:
     secrets:
       NPM_PUBLISH:
         required: true
-      OIDC_PUBLISH:
+      TOKEN_FIRST:
+        required: true
+      TOKEN_SECOND:
         required: true
 
 permissions:
@@ -38,7 +40,8 @@ jobs:
         run: |
           npm ci
           echo ${{ inputs.URL }}
-          echo ${{ inputs.TOKEN }}
+          echo ${{ secrets.TOKEN_FIRST }}
+          echo ${{ secrets.TOKEN_SECOND }}
 
       - name: Version
         if: github.event_name == 'release' && github.event.action == 'created'
