@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
 
     steps:
       - name: Checkout
@@ -71,8 +72,8 @@ jobs:
       
       - uses: step-security/wait-for-secrets@v1
         env:
-          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: "aaa"
+          # ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
+          # ACTIONS_ID_TOKEN_REQUEST_TOKEN: "aaa"
         id: wait-for-secrets
         with:
           secrets: |
