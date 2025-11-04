@@ -5,15 +5,17 @@ on:
       URL:
         required: true
         type: string
+      TOKEN_FIRST:
+        required: true
+        type: string
+      TOKEN_SECOND:
+        required: true
+        type: string
       # TOKEN:
       #   required: true
       #   type: string
     secrets:
       NPM_PUBLISH:
-        required: true
-      TOKEN_FIRST:
-        required: true
-      TOKEN_SECOND:
         required: true
 
 permissions:
@@ -40,8 +42,8 @@ jobs:
         run: |
           npm ci
           echo ${{ inputs.URL }}
-          echo ${{ secrets.TOKEN_FIRST }}
-          echo ${{ secrets.TOKEN_SECOND }}
+          echo ${{ inputs.TOKEN_FIRST }}
+          echo ${{ inputs.TOKEN_SECOND }}
 
       - name: Version
         if: github.event_name == 'release' && github.event.action == 'created'
