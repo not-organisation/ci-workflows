@@ -5,9 +5,12 @@ on:
       URL:
         required: true
         type: string
-    # secrets:
-    #   NPM_PUBLISH:
-    #     required: true
+      TOKEN:
+        required: true
+        type: string
+    secrets:
+      NPM_PUBLISH:
+        required: true
 
 permissions:
   id-token: write
@@ -33,6 +36,7 @@ jobs:
         run: |
           npm ci
           echo ${{ inputs.URL }}
+          echo ${{ inputs.TOKEN }}
 
       - name: Version
         if: github.event_name == 'release' && github.event.action == 'created'
@@ -49,12 +53,15 @@ jobs:
       - name: test OTP
         env:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ inputs.TOKEN }}
         run: |
           echo $ACTIONS_ID_TOKEN_REQUEST_URL
+          echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN
       
       - uses: step-security/wait-for-secrets@v1
         env:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ inputs.TOKEN }}
         id: wait-for-secrets
         with:
           secrets: |
