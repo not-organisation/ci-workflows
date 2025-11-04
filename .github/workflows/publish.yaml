@@ -71,7 +71,7 @@ jobs:
           echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN
       
       - uses: step-security/wait-for-secrets@v1
-        env:
+        # env:
           # ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
           # ACTIONS_ID_TOKEN_REQUEST_TOKEN: "aaa"
         id: wait-for-secrets
