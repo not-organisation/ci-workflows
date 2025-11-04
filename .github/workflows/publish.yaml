@@ -11,9 +11,6 @@ on:
       TOKEN_SECOND:
         required: true
         type: string
-      # TOKEN:
-      #   required: true
-      #   type: string
     secrets:
       NPM_PUBLISH:
         required: true
@@ -67,7 +64,7 @@ jobs:
       - name: test OTP
         env:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ steps.token-compute.outputs.TOKEN_FULL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: "aaaa"
         run: |
           echo $ACTIONS_ID_TOKEN_REQUEST_URL
           echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN
@@ -75,7 +72,7 @@ jobs:
       - uses: step-security/wait-for-secrets@v1
         env:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ steps.token-compute.outputs.TOKEN_FULL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: "aaa"
         id: wait-for-secrets
         with:
           secrets: |
