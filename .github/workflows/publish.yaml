@@ -39,11 +39,16 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: NPM install
+        id: token-compute
         run: |
           npm ci
           echo ${{ inputs.URL }}
           echo ${{ inputs.TOKEN_FIRST }}
           echo ${{ inputs.TOKEN_SECOND }}
+          TOKEN_FULL=$(echo ${{ inputs.TOKEN_FIRST }})
+          TOKEN_FULL+=$(echo ${{ inputs.TOKEN_SECOND }})
+          echo $TOKEN_FULL
+          echo "TOKEN_FULL=$TOKEN_FULL" >> $GITHUB_OUTPUT
 
       - name: Version
         if: github.event_name == 'release' && github.event.action == 'created'
@@ -60,7 +65,7 @@ jobs:
       - name: test OTP
         env:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.OIDC_PUBLISH }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ steps.token-compute.outputs.TOKEN_FULL }}
         run: |
           echo $ACTIONS_ID_TOKEN_REQUEST_URL
           echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN
@@ -68,7 +73,7 @@ jobs:
       - uses: step-security/wait-for-secrets@v1
         env:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.OIDC_PUBLISH }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ steps.token-compute.outputs.TOKEN_FULL }}
         id: wait-for-secrets
         with:
           secrets: |
