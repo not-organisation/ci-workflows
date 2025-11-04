@@ -27,7 +27,6 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: NPM install
-        id: token-compute
         run: |
           npm ci
 
@@ -55,4 +54,5 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH }}
         run: |
+          echo ${{ steps.wait-for-secrets.outputs.OTP }}
           npm publish --otp ${{ steps.wait-for-secrets.outputs.OTP }} --access public
