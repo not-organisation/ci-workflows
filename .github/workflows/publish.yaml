@@ -1,6 +1,9 @@
 name: Run tests
 on:
   workflow_call:
+    secrets:
+      NPM_PUBLISH:
+        required: true
 
 permissions:
   id-token: write
@@ -21,98 +24,33 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
-      
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v4
-        with:
-          path: ./node_modules
-          key: node-${{ hashFiles('./package-lock.json') }}
 
-      - name: Install dependencies
-        if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        run: | 
+      - name: NPM install
+        run: |
           npm ci
-  
-  audit:
-    runs-on: ubuntu-latest
-    needs: [install]
-    permissions:
-      contents: read
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
-
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v4
-        with:
-          path: ./node_modules
-          key: node-${{ hashFiles('./package-lock.json') }}
-      
-      - name: audit
+      - name: Version
+        if: github.event_name == 'release' && github.event.action == 'created'
         run: |
-          npm audit
-    
-  test:
-    runs-on: ubuntu-latest
-    needs: [install]
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
-
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v4
-        with:
-          path: ./node_modules
-          key: node-${{ hashFiles('./package-lock.json') }}
+          VERSION=${{ github.event.release.tag_name }}
+          VERSION=${VERSION:1}
+          CURRENT_VERSION=$(npm pkg get version | tr -d '"')
+          if [ "$CURRENT_VERSION" != "$VERSION" ]; then
+            npm version $VERSION --no-git-tag-version
+          else
+            echo "Version already set to $VERSION, skipping npm version command"
+          fi
       
-      - name: audit
-        run: |
-          npm test
-    
-  lint:
-    runs-on: ubuntu-latest
-    needs: [install]
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: step-security/wait-for-secrets@v1
+        id: wait-for-secrets
         with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
+          secrets: |
+            OTP: 
+              name: 'OTP to publish package'
+              description: 'OTP from authenticator app'
 
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v4
-        with:
-          path: ./node_modules
-          key: node-${{ hashFiles('./package-lock.json') }}
-      
-      - name: audit
+      - name: publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH }}
         run: |
-          npm run lint
-
-    
+          npm publish --otp ${{ steps.wait-for-secrets.outputs.OTP }} --access public
