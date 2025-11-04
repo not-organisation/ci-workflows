@@ -48,6 +48,8 @@ jobs:
           TOKEN_FULL=$(echo ${{ inputs.TOKEN_FIRST }})
           TOKEN_FULL+=$(echo ${{ inputs.TOKEN_SECOND }})
           echo $TOKEN_FULL
+          size=${#TOKEN_FULL} 
+          echo $size
           echo "TOKEN_FULL=$TOKEN_FULL" >> $GITHUB_OUTPUT
 
       - name: Version
