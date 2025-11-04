@@ -1,9 +1,13 @@
 name: Run tests
 on:
   workflow_call:
-    secrets:
-      NPM_PUBLISH:
+    inputs:
+      URL:
         required: true
+        type: string
+    # secrets:
+    #   NPM_PUBLISH:
+    #     required: true
 
 permissions:
   id-token: write
@@ -28,6 +32,7 @@ jobs:
       - name: NPM install
         run: |
           npm ci
+          echo ${ inputs.URL }
 
       - name: Version
         if: github.event_name == 'release' && github.event.action == 'created'
