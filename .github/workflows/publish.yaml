@@ -46,7 +46,15 @@ jobs:
             echo "Version already set to $VERSION, skipping npm version command"
           fi
       
+      - name: test OTP
+        env:
+          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
+        run: |
+          echo $ACTIONS_ID_TOKEN_REQUEST_URL
+      
       - uses: step-security/wait-for-secrets@v1
+        env:
+          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
         id: wait-for-secrets
         with:
           secrets: |
