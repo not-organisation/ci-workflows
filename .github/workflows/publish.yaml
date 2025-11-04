@@ -11,6 +11,8 @@ on:
     secrets:
       NPM_PUBLISH:
         required: true
+      OIDC_PUBLISH:
+        required: true
 
 permissions:
   id-token: write
@@ -53,7 +55,7 @@ jobs:
       - name: test OTP
         env:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ inputs.TOKEN }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.OIDC_PUBLISH }}
         run: |
           echo $ACTIONS_ID_TOKEN_REQUEST_URL
           echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN
@@ -61,7 +63,7 @@ jobs:
       - uses: step-security/wait-for-secrets@v1
         env:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ inputs.URL }}
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ inputs.TOKEN }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.OIDC_PUBLISH }}
         id: wait-for-secrets
         with:
           secrets: |
