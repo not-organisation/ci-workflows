@@ -5,9 +5,9 @@ on:
       URL:
         required: true
         type: string
-      TOKEN:
-        required: true
-        type: string
+      # TOKEN:
+      #   required: true
+      #   type: string
     secrets:
       NPM_PUBLISH:
         required: true
